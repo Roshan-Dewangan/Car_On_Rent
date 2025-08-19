@@ -1,6 +1,9 @@
-var ImageKit = require("imagekit");
+import ImageKit from "imagekit";
+
 var imagekit = new ImageKit({
-  publicKey: "public_Bk4byP4C2YR28ZW5jmjOy8TlezY=",
-  privateKey: "private_nNI7ycnAGc******************",
-  urlEndpoint: "https://ik.imagekit.io/ocepz6ikp",
+  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
 });
+
+export default imagekit;
