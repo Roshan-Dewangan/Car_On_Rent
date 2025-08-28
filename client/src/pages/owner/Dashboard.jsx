@@ -3,12 +3,16 @@ import { dummyDashboardData } from "../../assets/assets";
 import Title from "../../components/owner/Title";
 import { useState } from "react";
 import { assets } from "../../assets/assets";
+import { useAppContext } from "../../context/AppContext";
 
 const Dashboard = () => {
-  const [data, setData] = useState({
-    totalcars: 0,
+  const { axios, isOwner, currency } = useAppContext();
 
+  const [data, setData] = useState({
+    
     totalBookings: 0,
+
+    totalcars: 0,
 
     pendingBookings: 0,
 
@@ -19,10 +23,12 @@ const Dashboard = () => {
     monthlyRevenue: 0,
   });
 
-  const currency = import.meta.env.VITE_CURRENCY;
-
   const dashboardCards = [
-    { title: "Total Cars", value: data.totalcars, icon: assets.carIconColored },
+    
+    { title: "Total Cars",
+      value: data.totalcars, 
+      icon: assets.carIconColored
+    },
 
     {
       title: "Total Bookings",
@@ -30,7 +36,6 @@ const Dashboard = () => {
       icon: assets.listIconColored,
     },
 
-    ,
     {
       title: "Pending",
       value: data.pendingBookings,
@@ -44,9 +49,25 @@ const Dashboard = () => {
     },
   ];
 
+  const fetchDashboardData = async () => {
+    try {
+      const { data } = await axios.get("/api/owner/dashboard");
+
+      if (data.success) {
+        setData(data.dashboardData);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   useEffect(() => {
-    setData(dummyDashboardData);
-  }, []);
+    if (isOwner) {
+      fetchDashboardData();
+    }
+  }, [isOwner]);
 
   return (
     <div className=" px-4 pt-10 md:px-10 flex-1">
@@ -131,26 +152,24 @@ text-sm"
               </div>
             </div>
           ))}
-
-          
         </div>
 
         {/* monthly revenue  */}
 
-          <div
-            className="p-4 md:p-6 mb-6 border border-borderColor rounded-md w-full
+        <div
+          className="p-4 md:p-6 mb-6 border border-borderColor rounded-md w-full
 
 md:max-w-xs"
-          >
-            <h1 className="text-lg font-medium">Monthly Revenue</h1>
+        >
+          <h1 className="text-lg font-medium">Monthly Revenue</h1>
 
-            <p className="text-gray-500">Revenue for current month</p>
+          <p className="text-gray-500">Revenue for current month</p>
 
-            <p className="text-3x1 mt-6 font-semibold text-primary">
-              {currency}
-              {data.monthlyRevenue}
-            </p>
-          </div>
+          <p className="text-3x1 mt-6 font-semibold text-primary">
+            {currency}
+            {data.monthlyRevenue}
+          </p>
+        </div>
       </div>
     </div>
   );

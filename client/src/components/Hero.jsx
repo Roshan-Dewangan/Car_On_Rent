@@ -1,75 +1,118 @@
-import React from "react";
+import React, { useState } from "react";
 import { assets, cityList } from "../assets/assets";
-
+import { useAppContext } from "../context/AppContext";
+import { motion } from "motion/react";
 const Hero = () => {
-  const [pickupLocation, setPickupLocation] = "";
+  const [pickupLocation, setPickupLocation] = useState("");
+
+  const {
+    pickupDate,
+    setPickupDate,
+    returnDate,
+    setReturnDate,
+    navigate,
+  } = useAppContext();
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+
+    navigate(
+      `/cars?pickupLocation=${pickupLocation}&pickupDate=${pickupDate}&returnDate=${returnDate}`
+    );
+  };
+
   return (
-    <div className="h-screen flex flex-col items-center justify-center gap-14 bg-light text-center">
-      <h1 className="text-4xl md:text-5xl font-semibold">
-        Luxury Cars on Rent
-      </h1>
-
-      <form
-        className="flex flex-col md:flex-row items-start md:items-center
-        justify-between p-6 rounded-lg md:rounded-full w-full max-w-80 md:max-w-200 bg-white shadow-[0px_8px_20px_rgba(0,0,0,0.1)]"
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8 }}
+      className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-light text-center"
+    >
+      <motion.h1
+        initial={{ y: 50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.8, delay: 0.2 }}
+        className="text-4xl md:text-5xl font-semibold mb-8"
       >
-        <div></div>
+        Luxury Cars on Rent
+      </motion.h1>
 
-        <div className="flex flex-col md:flex-row items-start md:items-center gap-10 min-md:ml-8">
-          <div className="flex flex-col md:flex-row items-start gap-2">
-            <select
-              required
-              value={pickupLocation}
-              onChange={(e) => setPickupLocation(e.target.value)}
-            >
-              <option value="">Pick up Location</option>
-              {cityList.map((city) => (
-                <option key={city} value={city}>
-                  {city}
-                </option>
-              ))}
-            </select>
-            <p className="px-1 text-sm text-gray-500">
-              {pickupLocation ? pickupLocation : "Please select location"}
-            </p>
-          </div>
-
-          <div className="flex flex-col md:flex-row items-start gap-2">
-            <label htmlFor="pickup-date">Pick-up date</label>
-            <input
-              type="date"
-              id="pickup-date"
-              min={new Date().toISOString().split("T")[0]}
-              className="text-sm text-gray-500"
-              required
-            />
-          </div>
-
-          <div className="flex flex-col md:flex-row items-start gap-2">
-            <label htmlFor="return-date">Return date</label>
-            <input
-              type="date"
-              id="return-date"
-              className="text-sm text-gray-500"
-              required
-            />
-          </div>
+      <motion.form
+        initial={{ scale: 0.95, opacity: 0, y: 50 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.4 }}
+        onSubmit={handleSearch}
+        className="flex flex-col md:flex-row flex-wrap items-center justify-center gap-6 bg-white shadow-lg p-6 rounded-xl md:rounded-full max-w-[90vw] md:max-w-4xl w-full"
+      >
+        {/* Location Select */}
+        <div className="flex flex-col text-left">
+          <select
+            required
+            value={pickupLocation}
+            onChange={(e) => setPickupLocation(e.target.value)}
+            className="border border-gray-300 rounded-md px-4 py-2 w-48 md:w-56 text-gray-600"
+          >
+            <option value="">Pick up Location</option>
+            {cityList.map((city) => (
+              <option key={city} value={city}>
+                {city}
+              </option>
+            ))}
+          </select>
         </div>
-        <button
-          className="flex items-center justify-center gap-1 px-9 py-3 max-sm:mt-4
-           bg-primary hover:bg-primary-dull text-white rounded-full cursor-pointer"
-        >
-          <img
-            src={assets.search_icon}
-            alt="search"
-            className="brightness-300"
-          />
-          Search
-        </button>
-      </form>
 
-      <img src={assets.main_car} alt="car" className="max-h-74" />
-    </div>
+        {/* Pickup Date */}
+        <div className="flex flex-col text-left">
+          <label htmlFor="pickup-date" className="text-sm text-gray-600 mb-1">
+            Pick-up date
+          </label>
+          <input
+            type="date"
+            id="pickup-date"
+            min={new Date().toISOString().split("T")[0]}
+            value={pickupDate}
+            onChange={(e) => setPickupDate(e.target.value)}
+            className="border border-gray-300 rounded-md px-4 py-2 w-48 md:w-56 text-gray-600"
+            required
+          />
+        </div>
+
+        {/* Return Date */}
+        <div className="flex flex-col text-left">
+          <label htmlFor="return-date" className="text-sm text-gray-600 mb-1">
+            Return date
+          </label>
+          <input
+            type="date"
+            id="return-date"
+            value={returnDate}
+            onChange={(e) => setReturnDate(e.target.value)}
+            className="border border-gray-300 rounded-md px-4 py-2 w-48 md:w-56 text-gray-600"
+            required
+          />
+        </div>
+
+        {/* Search Button */}
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          type="submit"
+          className="flex items-center gap-2 bg-primary hover:bg-primary-dull text-white font-semibold py-2 px-6 rounded-full transition"
+        >
+          <img src={assets.search_icon} alt="search" className="w-4 h-4" />
+          Search
+        </motion.button>
+      </motion.form>
+
+      <motion.img
+        initial={{ scale: 0.95, opacity: 0, y: 50 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.4 }}
+        src={assets.main_car}
+        alt="main car"
+        className="max-h-72 mt-12 object-contain"
+      />
+    </motion.div>
   );
 };
 
